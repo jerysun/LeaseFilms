@@ -1,0 +1,31 @@
+﻿@model IEnumerable<LeaseFilms.Models.Customer>
+
+@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Customers</h2>
+@if (!Model.Any())
+{
+    <p>We don't have any customers yet.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>Customer</th>
+        </tr>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <!--<td onclick="location.href='@(Url.Action("Details", "Customers", new { id = customer.Id }))'">
+                    <a style="cursor:pointer">@customer.Name</a>
+                </td>-->
+                <td>
+                    @Html.ActionLink(customer.Name, "Details", "Customers", new { id = customer.Id }, null)
+                </td>
+            </tr>
+        }
+    </table>
+}
