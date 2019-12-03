@@ -6,9 +6,9 @@ using System.Web;
 
 namespace LeaseFilms.ViewModels
 {
-    public class RandomMovieViewModel
+    public class NewCustomerViewModel
     {
-        public Movie Movie { get; set; }
-        public List<Customer> Customers { get; set; }
+        public IEnumerable<MembershipType> MembershipTypes { get; set; }
+        public Customer Customer { get; set; }
     }
 }
