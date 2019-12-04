@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using LeaseFilms.ViewModels;
+using System.Threading.Tasks;
 
 namespace LeaseFilms.Controllers
 {
@@ -23,32 +24,72 @@ namespace LeaseFilms.Controllers
             _context.Dispose();
         }
 
-        public ActionResult New()
+        [HttpPost]
+        public async Task<ActionResult> Save(Customer customer)
         {
-            var membershipTypes = _context.MembershipTypes.ToList();
-            var viewModel = new NewCustomerViewModel
+            if (customer.Id == 0)
+            {
+                _context.Customers.Add(customer);
+            }
+            else
+            {
+                var customerInDb = await _context.Customers.SingleAsync(c => c.Id == customer.Id);
+
+                //autoMapper.Map(Customer, customerInDb); DTO; potential security hole
+                customerInDb.Name = customer.Name;
+                customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
+                customerInDb.MembershipTypeId = customer.MembershipTypeId;
+                customerInDb.Birthdate = customer.Birthdate;
+            }
+            await _context.SaveChangesAsync();// Transaction
+
+            return RedirectToAction("Index", "Customers");
+        }
+
+        public async Task<ActionResult> New()
+        {
+            var membershipTypes = await _context.MembershipTypes.ToListAsync();
+            var viewModel = new CustomerFormViewModel
             {
                 MembershipTypes = membershipTypes
             };
 
-            return View(viewModel);
+            return View("CustomerForm", viewModel);
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             //EF does the deferred execution if it's not followed by .ToList()
-            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
+            var customers = await _context.Customers.Include(c => c.MembershipType).ToListAsync();
             return View(customers);
         }
 
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == id);
+            var customer = await _context.Customers.Include(c => c.MembershipType).SingleOrDefaultAsync(c => c.Id == id);
 
             if (customer == null)
                 return HttpNotFound();
 
             return View(customer);
+        }
+
+        public async Task<ActionResult> Edit(int id)
+        {
+            var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (customer == null)
+                return HttpNotFound();
+
+            // It serves the View below
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = await _context.MembershipTypes.ToListAsync()
+            };
+
+            //redirect to CustomerForm.cshtml rather than (the "default" Edit.cshtml if we don't designate the arguments)
+            return View("CustomerForm", viewModel);
         }
     }
 }

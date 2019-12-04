@@ -16,11 +16,17 @@ namespace LeaseFilms.Models
         public Genre Genre { get; set; }
         [Required]
         public byte GenreId { get; set; }
+
         [Required]
+        [Display(Name = "Release Date")]
         public DateTime ReleaseDate { get; set; }
+
         [Required]
+        [Display(Name = "Added Date")]
         public DateTime DateAdded { get; set; }
+
         [Required]
+        [Display(Name = "Number in Stock")]
         public int NumberInStock { get; set; }
     }
 }

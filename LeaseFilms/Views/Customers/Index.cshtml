@@ -24,7 +24,7 @@ else
                     <a style="cursor:pointer">@customer.Name</a>
                 </td>-->
                 <td>
-                    @Html.ActionLink(customer.Name, "Details", "Customers", new { id = customer.Id }, null)
+                    @Html.ActionLink(customer.Name, "Edit", "Customers", new { id = customer.Id }, null)
                 </td>
                 <td>
                     @customer.MembershipType.Name
