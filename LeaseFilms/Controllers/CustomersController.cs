@@ -25,8 +25,19 @@ namespace LeaseFilms.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(Customer customer)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new CustomerFormViewModel
+                {
+                    Customer = customer,
+                    MembershipTypes = await _context.MembershipTypes.ToListAsync()
+                };
+                return View("CustomerForm", viewModel);
+            }
+
             if (customer.Id == 0)
             {
                 _context.Customers.Add(customer);
@@ -51,6 +62,7 @@ namespace LeaseFilms.Controllers
             var membershipTypes = await _context.MembershipTypes.ToListAsync();
             var viewModel = new CustomerFormViewModel
             {
+                Customer = new Customer(), // added for hidden value
                 MembershipTypes = membershipTypes
             };
 

@@ -46,7 +46,8 @@ namespace LeaseFilms.Controllers
 
             var modelView = new MovieFormViewModel
             {
-                Genres = genres
+                Genres = genres,
+                Movie = new Movie()
             };
 
             return View("MovieForm", modelView);
@@ -71,6 +72,17 @@ namespace LeaseFilms.Controllers
         [HttpPost]
         public async Task<ActionResult> Save(Movie movie)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new MovieFormViewModel
+                {
+                    Movie = movie,
+                    Genres = await _context.Genres.ToListAsync()
+                };
+
+                return View("MovieForm", viewModel);
+            }
+
             if (movie.Id == 0)
             {
                 _context.Movies.Add(movie);

@@ -15,6 +15,7 @@ namespace LeaseFilms.Models
         [Required]
         public Genre Genre { get; set; }
         [Required]
+        [Display(Name = "Genre")]
         public byte GenreId { get; set; }
 
         [Required]
@@ -27,6 +28,7 @@ namespace LeaseFilms.Models
 
         [Required]
         [Display(Name = "Number in Stock")]
+        [Range(1, 20)]
         public int NumberInStock { get; set; }
     }
 }
