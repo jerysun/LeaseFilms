@@ -7,6 +7,7 @@ LeaseFilms is an ASP.NET MVC open source project based on .NET Framework 4.7.2.
 - Razor
 - Automapper
 - Entity Framework
+- Anti Forgery Token
 - Facebook account logon
 
 Have fun,
