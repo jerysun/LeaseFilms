@@ -14,8 +14,11 @@ namespace LeaseFilms.App_Start
         {
             CreateMap<Customer, CustomerDto>();
             CreateMap<CustomerDto, Customer>();
+
             CreateMap<Movie, MovieDto>();
             CreateMap<MovieDto, Movie>();
+
+            CreateMap<MembershipType, MembershipTypeDto>();
         }
     }
 }

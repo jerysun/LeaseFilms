@@ -71,9 +71,7 @@ namespace LeaseFilms.Controllers
 
         public async Task<ActionResult> Index()
         {
-            //EF does the deferred execution if it's not followed by .ToList()
-            var customers = await _context.Customers.Include(c => c.MembershipType).ToListAsync();
-            return View(customers);
+            return View();
         }
 
         public async Task<ActionResult> Details(int id)

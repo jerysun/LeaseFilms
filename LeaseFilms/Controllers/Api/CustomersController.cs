@@ -29,7 +29,8 @@ namespace LeaseFilms.Controllers.Api
         // GET /api/customers
         public async Task<IHttpActionResult> GetCustomers()
         {
-            var customers = await _context.Customers.ToListAsync();
+            //We need the EAGER loading, thus here the Include method
+            var customers = await _context.Customers.Include(c => c.MembershipType).ToListAsync();
             var customersToReturn = Mapper.Map<IEnumerable<CustomerDto>>(customers);
             return Ok(customersToReturn);
         }
