@@ -28,7 +28,7 @@ namespace LeaseFilms.Controllers.Api
         // GET /api/movies
         public async Task<IHttpActionResult> GetMovies()
         {
-            var moviesInDb = await _context.Movies.ToListAsync();
+            var moviesInDb = await _context.Movies.Include(m => m.Genre).ToListAsync();
             var moviesDto = Mapper.Map<IEnumerable<MovieDto>>(moviesInDb);
             return Ok(moviesDto);
         }

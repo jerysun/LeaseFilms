@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeaseFilms.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace LeaseFilms.Dtos
 
         [Required]
         public byte GenreId { get; set; }
+
+        public Genre Genre { get; set; }
 
         [Required]
         public DateTime ReleaseDate { get; set; }

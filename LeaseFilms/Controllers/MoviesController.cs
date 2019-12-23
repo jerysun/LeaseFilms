@@ -47,7 +47,7 @@ namespace LeaseFilms.Controllers
             var modelView = new MovieFormViewModel
             {
                 Genres = genres,
-                Movie = new Movie()
+                //Movie = new Movie()
             };
 
             return View("MovieForm", modelView);
@@ -59,24 +59,22 @@ namespace LeaseFilms.Controllers
             if (movie == null)
                 return HttpNotFound();
 
-            var genres = await _context.Genres.ToListAsync();
             var viewModel = new MovieFormViewModel
             {
-                Genres = genres,
-                Movie = movie
+                Genres = await _context.Genres.ToListAsync(),
             };
 
             return View("MovieForm", viewModel);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(Movie movie)
         {
             if (!ModelState.IsValid)
             {
-                var viewModel = new MovieFormViewModel
+                var viewModel = new MovieFormViewModel(movie)
                 {
-                    Movie = movie,
                     Genres = await _context.Genres.ToListAsync()
                 };
 
@@ -85,6 +83,7 @@ namespace LeaseFilms.Controllers
 
             if (movie.Id == 0)
             {
+                movie.DateAdded = DateTime.Now;
                 _context.Movies.Add(movie);
             }
             else
