@@ -23,11 +23,15 @@ namespace LeaseFilms.Controllers
         {
             _context.Dispose();
         }
+
         public async Task<ActionResult> Index()
         {
             var movies = await _context.Movies.Include(m => m.Genre).ToListAsync();
 
-            return View(movies);
+            if (User.IsInRole(RoleName.CanManageMovies))
+                return View("List", movies);
+
+            return View("ReadOnlyList", movies);
         }
 
         public async Task<ActionResult> Details(int id)
@@ -40,6 +44,7 @@ namespace LeaseFilms.Controllers
             return View(movie);
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public async Task<ActionResult> New()
         {
             var genres = await _context.Genres.ToListAsync();
@@ -53,6 +58,7 @@ namespace LeaseFilms.Controllers
             return View("MovieForm", modelView);
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public async Task<ActionResult> Edit(int id)
         {
             var movie = await _context.Movies.SingleOrDefaultAsync(m => m.Id == id);
@@ -69,6 +75,7 @@ namespace LeaseFilms.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public async Task<ActionResult> Save(Movie movie)
         {
             if (!ModelState.IsValid)
