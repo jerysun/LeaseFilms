@@ -6,6 +6,7 @@
 *.user
 *.sln.docstates
 .vs/
+LeaseFilms/Web.config
 
 # Build results
 [Dd]ebug/
