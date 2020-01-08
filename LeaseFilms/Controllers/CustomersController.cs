@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using LeaseFilms.ViewModels;
 using System.Threading.Tasks;
+using System.Runtime.Caching;
 
 namespace LeaseFilms.Controllers
 {
@@ -73,6 +74,26 @@ namespace LeaseFilms.Controllers
         {
             return View();
         }
+
+        // Data cache example, but better not use this technique in EF projects for its causing too much trouble
+        /*
+        public async Task<ActionResult> Index()
+        {
+            if (MemoryCache.Default[CacheItems.Genres] == null)
+            {
+                MemoryCache.Default[CacheItems.Genres] = await _context.Genres.ToListAsync();
+            }
+
+            var genres = MemoryCache.Default[CacheItems.Genres] as IEnumerable<Genre>;
+
+            if (genres == null)
+                return HttpNotFound();
+
+            // TODO: if you want to make it more useful
+
+            return View();
+        }
+        */
 
         public async Task<ActionResult> Details(int id)
         {

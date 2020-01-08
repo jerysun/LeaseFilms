@@ -65,7 +65,7 @@ namespace LeaseFilms.Controllers
             if (movie == null)
                 return HttpNotFound();
 
-            var viewModel = new MovieFormViewModel
+            var viewModel = new MovieFormViewModel(movie)
             {
                 Genres = await _context.Genres.ToListAsync(),
             };
