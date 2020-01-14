@@ -14,7 +14,7 @@ LeaseFilms is an ASP.NET MVC open source project based on .NET Framework 4.7.2.
 - Rename Bew.config as Web.config
 - Replace Facebook AppID and AppSecret with your own inside Web.config
 
-## Two Login accunts
+## Two Login accounts:
     * Email: guest@leasefilms.com
     * Password: Drowssap1/
 
