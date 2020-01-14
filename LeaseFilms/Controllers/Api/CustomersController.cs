@@ -27,12 +27,25 @@ namespace LeaseFilms.Controllers.Api
         }
 
         // GET /api/customers
-        public async Task<IHttpActionResult> GetCustomers()
+        public IHttpActionResult GetCustomers(string query = null)
         {
             //We need the EAGER loading, thus here the Include method
+            /*
             var customers = await _context.Customers.Include(c => c.MembershipType).ToListAsync();
             var customersToReturn = Mapper.Map<IEnumerable<CustomerDto>>(customers);
             return Ok(customersToReturn);
+            */
+            var customersQuery = _context.Customers.Include(c => c.MembershipType);
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                customersQuery = customersQuery.Where(c => c.Name.Contains(query));
+            }
+
+            var customerDtos = customersQuery.ToList().Select(Mapper.Map<Customer, CustomerDto>);
+
+            return Ok(customerDtos);
+
         }
 
         // GET /api/customers/1
