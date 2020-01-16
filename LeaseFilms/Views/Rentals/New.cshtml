@@ -1,5 +1,4 @@
-﻿
-@model dynamic
+﻿@model dynamic
 
 @{
     ViewBag.Title = "New Rental Form";
@@ -11,7 +10,7 @@
     <div class="form-group">
         <label>Customer</label>
         <div class="tt-container">
-            <input id="customer" type="text" value="" class="form-control" />
+            <input id="customer" data-rule-validCustomer="true" required type="text" value="" class="form-control" />
         </div>
     </div>
 
@@ -32,10 +31,13 @@
 </form>
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval")
     <script>
         $(document).ready(function () { // fetch movies from this film source
 
-            var vm = {}; //viewModel
+            var vm = {  //viewModel
+                movieIds: []
+            };
 
             var customers = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
@@ -53,8 +55,52 @@
                 name: 'customers',
                 display: 'name',
                 source: customers
-            }).on("typeahead.select", function (e, customer) { //listen on event "typeahead.select"
-                vm.customerId = customer.id;
+            }).on("typeahead:select", function (e, customer) { //listen on event "typeahead:select"
+                vm.customerId = customer.id; //later send it to the server
+            });
+
+            var movies = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/movies?query=%QUERY',
+                    wildcard: '%QUERY' //'%QUERY' is the movie ID
+                }
+            });
+
+            $('#movie').typeahead({
+                minLength: 3, //when you input at least 3 characters, the auto-completion starts to work
+                highlight: true
+            }, {
+                name: 'movies',
+                display: 'name',
+                source: movies
+            }).on("typeahead:select", function (e, movie) { //listen on event "typeahead:select"
+                $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
+                $("#movie").typeahead("val", "");//clear the "auto-completion" textbox and hide it
+                vm.movieIds.push(movie.id);
+            });
+
+            $.validator.addMethod("validCustomer", function () {
+                return vm.customerId && vm.customerId !== 0;
+            }, "Please select a valid customer.");//if return false, then display the error msg
+
+            $("#newRental").validate({
+                submitHandler: function () {
+                    //This will prevent a form from submitting normally. If this method
+                    //is called, the default action of the event won't be triggered.
+                    e.preventDefault();//Instead, we'll use AJAX:
+
+                    $.ajax({
+                        url: "/api/newRentals",
+                        method: "post",
+                        data: vm
+                    }).done(function () {
+                        toastr.success("Rentals successfully recorded.");
+                    }).fail(function () {
+                        toastr.error("Something unexpected happened.")
+                    });
+                }
             });
         });
     </script>
