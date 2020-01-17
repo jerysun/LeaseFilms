@@ -10,14 +10,15 @@
     <div class="form-group">
         <label>Customer</label>
         <div class="tt-container">
-            <input id="customer" data-rule-validCustomer="true" required type="text" value="" class="form-control" />
+            <!-- name is an important attribute for jQuery, although name attribute is normally for backend -->
+            <input id="customer" name="customer" data-rule-validCustomer="true" required type="text" value="" class="form-control" />
         </div>
     </div>
 
     <div class="form-group">
         <label>Movie</label>
         <div class="tt-container">
-            <input id="movie" type="text" value="" class="form-control" />
+            <input id="movie" name="movie" data-rule-atLeastOneMovie="true" type="text" value="" class="form-control" />
         </div>
     </div>
 
@@ -81,25 +82,33 @@
                 vm.movieIds.push(movie.id);
             });
 
-            $.validator.addMethod("validCustomer", function () {
-                return vm.customerId && vm.customerId !== 0;
-            }, "Please select a valid customer.");//if return false, then display the error msg
+            $.validator.addMethod("validCustomer", () => vm.customerId && vm.customerId !== 0,
+                "Please select a valid customer.");//if return false, then display the error msg
 
-            $("#newRental").validate({
+            $.validator.addMethod("atLeastOneMovie", () => vm.movieIds.length > 0,
+                "Please select valid movies.");
+
+            var validator = $("#newRental").validate({
                 submitHandler: function () {
-                    //This will prevent a form from submitting normally. If this method
-                    //is called, the default action of the event won't be triggered.
-                    e.preventDefault();//Instead, we'll use AJAX:
-
                     $.ajax({
                         url: "/api/newRentals",
                         method: "post",
                         data: vm
                     }).done(function () {
                         toastr.success("Rentals successfully recorded.");
+
+                        $("#customer").typeahead("val", "");
+                        $("#movie").typeahead("val", "");
+                        $("#movies").empty();
+
+                        vm = { movieIds: [] };
+                        validator.resetForm();
                     }).fail(function () {
                         toastr.error("Something unexpected happened.")
                     });
+
+                    //e.preventDefault();//because in the handler the event of the form "#newRental" can't be passed on
+                    return false;
                 }
             });
         });
